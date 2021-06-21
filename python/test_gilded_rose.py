@@ -15,7 +15,7 @@ def assert_item(item, sell_in, quality):
     assert item.quality == quality
 
 
-def test_conjured_item_is_decaying_twice_as_fast_when_sell_in_has_passed():
+def test_conjured_item_is_decaying_by_four_when_sell_in_has_passed():
     item = ConjuredItem(0, 40)
 
     GildedRose(items=[item]).update_quality()
