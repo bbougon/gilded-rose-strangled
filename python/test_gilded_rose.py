@@ -1,4 +1,4 @@
-from python.gilded_rose import ConjuredItem, GildedRose, Item
+from python.gilded_rose import ConjuredItem, GildedRose, Item, SulfuraItem
 
 
 def test_conjured_item_is_decaying_twice_as_fast():
@@ -6,8 +6,13 @@ def test_conjured_item_is_decaying_twice_as_fast():
 
     GildedRose(items=[item]).update_quality()
 
-    assert item.sell_in == 9
-    assert item.quality == 48
+    assert item.name == "Conjured"
+    assert_item(item, 9, 48)
+
+
+def assert_item(item, sell_in, quality):
+    assert item.sell_in == sell_in
+    assert item.quality == quality
 
 
 def test_conjured_item_is_decaying_twice_as_fast_when_sell_in_has_passed():
@@ -15,8 +20,7 @@ def test_conjured_item_is_decaying_twice_as_fast_when_sell_in_has_passed():
 
     GildedRose(items=[item]).update_quality()
 
-    assert item.sell_in == -1
-    assert item.quality == 36
+    assert_item(item, -1, 36)
 
 
 def test_conjured_item_quality_cannot_be_negative():
@@ -24,8 +28,7 @@ def test_conjured_item_quality_cannot_be_negative():
 
     GildedRose(items=[item]).update_quality()
 
-    assert item.sell_in == -1
-    assert item.quality == 0
+    assert_item(item, -1, 0)
 
 
 def test_normal_item():
@@ -33,8 +36,7 @@ def test_normal_item():
 
     GildedRose(items=[item]).update_quality()
 
-    assert item.sell_in == 9
-    assert item.quality == 49
+    assert_item(item, 9, 49)
 
 
 def test_conjured_and_normal_items():
@@ -43,10 +45,8 @@ def test_conjured_and_normal_items():
 
     GildedRose(items=[conjured_item, normal_item]).update_quality()
 
-    assert conjured_item.sell_in == 9
-    assert conjured_item.quality == 48
-    assert normal_item.sell_in == 9
-    assert normal_item.quality == 49
+    assert_item(conjured_item, 9, 48)
+    assert_item(normal_item, 9, 49)
 
 
 def test_multiple_conjured_and_normal_items():
@@ -57,11 +57,20 @@ def test_multiple_conjured_and_normal_items():
 
     GildedRose(items=[first_conjured_item, second_conjured_item, first_normal_item, second_normal_item]).update_quality()
 
-    assert first_conjured_item.sell_in == 9
-    assert first_conjured_item.quality == 48
-    assert second_conjured_item.sell_in == 7
-    assert second_conjured_item.quality == 44
-    assert first_normal_item.sell_in == 9
-    assert first_normal_item.quality == 49
-    assert second_normal_item.sell_in == 8
-    assert second_normal_item.quality == 39
+    assert_item(first_conjured_item, 9, 48)
+    assert_item(second_conjured_item, 7, 44)
+    assert_item(first_normal_item, 9, 49)
+    assert_item(second_normal_item, 8, 39)
+
+
+def test_sulfuras():
+    sulfura = SulfuraItem(0)
+
+    assert sulfura.name == "Sulfuras, Hand of Ragnaros"
+    assert_item(sulfura, 0, 80)
+
+
+def test_sulfuras_does_not_decay_in_the_past():
+    sulfura = SulfuraItem(-1)
+
+    assert_item(sulfura, -1, 80)
