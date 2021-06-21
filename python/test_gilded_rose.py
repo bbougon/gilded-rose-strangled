@@ -1,4 +1,4 @@
-from python.gilded_rose import ConjuredItem, GildedRose, Item, SulfuraItem
+from python.gilded_rose import ConjuredItem, GildedRose, Item, SulfuraItem, AgedBrie, Backstage
 
 
 def test_conjured_item_is_decaying_twice_as_fast():
@@ -78,3 +78,78 @@ def test_sulfuras_does_not_decay_in_the_past():
     GildedRose(items=[sulfura]).update_quality()
 
     assert_item(sulfura, -1, 80)
+
+
+def test_aged_brie_is_improved():
+    aged_brie = AgedBrie(11, 29)
+
+    GildedRose(items=[aged_brie]).update_quality()
+
+    assert_item(aged_brie, 10, 30)
+
+
+def test_aged_brie_has_maximum_50_quality():
+    aged_brie = AgedBrie(0, 50)
+
+    GildedRose(items=[aged_brie]).update_quality()
+
+    assert_item(aged_brie, -1, 50)
+
+
+def test_backstage():
+    backstage = Backstage(15, 20)
+
+    GildedRose(items=[backstage]).update_quality()
+
+    assert backstage.name == "Backstage passes to a TAFKAL80ETC concert"
+    assert_item(backstage, 14, 21)
+
+
+def test_backstage_has_quality_improved_twice_at_10_days_from_concert():
+    backstage = Backstage(10, 45)
+
+    GildedRose(items=[backstage]).update_quality()
+
+    assert_item(backstage, 9, 47)
+
+
+def test_backstage_has_quality_improved_by_three_at_5_days_from_concert():
+    backstage = Backstage(5, 45)
+
+    GildedRose(items=[backstage]).update_quality()
+
+    assert_item(backstage, 4, 48)
+
+
+def test_backstage_has_maximum_quality():
+    backstage = Backstage(5, 48)
+
+    GildedRose(items=[backstage]).update_quality()
+
+    assert_item(backstage, 4, 50)
+
+
+def test_backstage_has_zero_quality_after_concert():
+    backstage = Backstage(0, 48)
+
+    GildedRose(items=[backstage]).update_quality()
+
+    assert_item(backstage, -1, 0)
+
+
+def test_normal_item_is_decaying_by_one():
+    item = Item("+5 Dexterity Vest", 11, 50)
+
+    GildedRose(items=[item]).update_quality()
+
+    assert item.name == "+5 Dexterity Vest"
+    assert_item(item, 10, 49)
+
+
+def test_normal_item_is_decaying_twice_as_fast_when_sell_in_is_negative():
+    item = Item("+5 Dexterity Vest", 0, 50)
+
+    GildedRose(items=[item]).update_quality()
+
+    assert item.name == "+5 Dexterity Vest"
+    assert_item(item, -1, 48)
