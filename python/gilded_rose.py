@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from ctypes import Union
+
 
 class GildedRoseLegacy(object):
 
@@ -49,6 +51,12 @@ class Item:
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
 
+class SulfuraItem(Item):
+
+    def __init__(self, sell_in):
+        super().__init__("Sulfuras, Hand of Ragnaros", sell_in, 80)
+
+
 class ConjuredItem(Item):
 
     def __init__(self, sell_in, quality):
@@ -66,8 +74,8 @@ class GildedRose(object):
     def __init__(self, items) -> None:
         super().__init__()
         self.items = items
-        self.conjured_items = [item for item in items if isinstance(item, ConjuredItem)]
-        self.normal_items = [item for item in items if item.name != "Conjured"]
+        self.conjured_items = [item for item in items if isinstance(item, (ConjuredItem, SulfuraItem))]
+        self.normal_items = [item for item in items if not isinstance(item, (ConjuredItem, SulfuraItem))]
 
     def update_quality(self):
         for item in self.conjured_items:
